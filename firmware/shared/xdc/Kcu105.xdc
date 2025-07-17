@@ -28,6 +28,31 @@ set_property -dict { PACKAGE_PIN J23 IOSTANDARD LVCMOS18 } [get_ports { phyRstN 
 set_property -dict { PACKAGE_PIN AK17 IOSTANDARD DIFF_SSTL12_DCI ODT RTT_48 } [get_ports { sysClk300P }]
 set_property -dict { PACKAGE_PIN AK16 IOSTANDARD DIFF_SSTL12_DCI ODT RTT_48 } [get_ports { sysClk300N }]
 
+# PGP differential clk
+set_property PACKAGE_PIN T6 [get_ports { pgpClkP }]
+set_property PACKAGE_PIN T5 [get_ports { pgpClkN }]
+create_clock -name pgpClk -period 6.400 [get_ports { pgpClkP }]
+
+# Use C2M pins here
+set_property PACKAGE_PIN F6 [get_ports { pgpTxP[0] }]
+set_property PACKAGE_PIN F5 [get_ports { pgpTxN[0] }]
+set_property PACKAGE_PIN D6 [get_ports { pgpTxP[1] }]
+set_property PACKAGE_PIN D5 [get_ports { pgpTxN[1] }]
+set_property PACKAGE_PIN C4 [get_ports { pgpTxP[2] }]
+set_property PACKAGE_PIN C3 [get_ports { pgpTxN[2] }]
+set_property PACKAGE_PIN B6 [get_ports { pgpTxP[3] }]
+set_property PACKAGE_PIN B5 [get_ports { pgpTxN[3] }]
+
+# Use M2C pins here
+set_property PACKAGE_PIN E4 [get_ports { pgpRxP[0] }]
+set_property PACKAGE_PIN E3 [get_ports { pgpRxN[0] }]
+set_property PACKAGE_PIN D2 [get_ports { pgpRxP[1] }]
+set_property PACKAGE_PIN D1 [get_ports { pgpRxN[1] }]
+set_property PACKAGE_PIN B2 [get_ports { pgpRxP[2] }]
+set_property PACKAGE_PIN B1 [get_ports { pgpRxN[2] }]
+set_property PACKAGE_PIN A4 [get_ports { pgpRxP[3] }]
+set_property PACKAGE_PIN A3 [get_ports { pgpRxN[3] }]
+
 set_property PACKAGE_PIN U4 [get_ports ethTxP]
 set_property PACKAGE_PIN U3 [get_ports ethTxN]
 set_property PACKAGE_PIN T2 [get_ports ethRxP]
@@ -71,8 +96,13 @@ create_clock -name ethClkP    -period 6.400 [get_ports {ethClkP}]
 create_clock -name phyClkP    -period 1.600 [get_ports {phyClkP}]
 create_clock -name sysClk300P -period 3.333 [get_ports {sysClk300P}]
 
-set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {ethClkP}] -group [get_clocks -include_generated_clocks {sysClk300P}]
-set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {phyClkP}] -group [get_clocks -include_generated_clocks {sysClk300P}]
+# Constraint for marking these clock domains as asynchronous (fix "unsafe" clock interactions)
+ set_clock_groups -asynchronous \
+        -group [get_clocks -include_generated_clocks *pgpClk*] \
+        -group [get_clocks -include_generated_clocks *phyRxClk*] \
+        -group [get_clocks -include_generated_clocks *sysClk300P*] \
+        -group [get_clocks -include_generated_clocks *ethClkP*] \
+        -group [get_clocks -include_generated_clocks *phyClkP*]
 
 ##############################################################################
 # BITSTREAM: .bit file Configuration
@@ -81,7 +111,7 @@ set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks {phy
 set_property CONFIG_VOLTAGE 1.8              [current_design]
 set_property CFGBVS GND                      [current_design]
 set_property CONFIG_MODE SPIx8               [current_design]
-set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 8 [current_design]
+set_property BITSTREAM.CONFIG.SPI_BUSWID TH 8 [current_design]
 
 set_property BITSTREAM.CONFIG.CONFIGRATE 12  [current_design]
 #set_property BITSTREAM.CONFIG.EXTMASTERCCLK_EN div-1 [current_design]

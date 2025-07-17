@@ -56,3 +56,37 @@ class AppTx(pr.Device):
             mode         = 'RW',
             base         = pr.Bool,
         ))
+        self.add(pr.RemoteVariable(
+            name	 = 'LED[0]',
+            description  = 'Control variable [0] for LED',
+            offset	 = 0x014,
+            bitOffset    = 0,
+            bitSize	 = 1,
+            mode	 = 'RW',
+            base	 = pr.Bool,
+        ))
+        self.add(pr.RemoteVariable(
+            name	 = 'LED[1]',
+            description  = 'Control variable [1] for LED',
+            offset	 = 0x014,
+            bitOffset    = 1,
+            bitSize	 = 1,
+            mode	 = 'RW',
+            base	 = pr.Bool,
+        ))
+        self.add(pr.RemoteVariable(
+            name         = 'toggleRate',
+            description  = 'toggle rate for LEDs',
+            offset       = 0x018,
+            bitSize      = 32,
+            mode         = 'RW',
+            base	 = pr.UInt))
+        self.add(pr.RemoteVariable(
+            name	 = 'toggleCounter',
+            description  = 'counter value',
+            offset	 = 0x01C,
+            bitSize	 = 32,
+            mode	 = 'RO',
+            base	 = pr.UInt))
+        
+        

@@ -39,7 +39,9 @@ entity AppTx is
       axilReadMaster  : in  AxiLiteReadMasterType;
       axilReadSlave   : out AxiLiteReadSlaveType;
       axilWriteMaster : in  AxiLiteWriteMasterType;
-      axilWriteSlave  : out AxiLiteWriteSlaveType);
+      axilWriteSlave  : out AxiLiteWriteSlaveType;
+      -- LED Output Port
+      led_out           : out slv(1 downto 0));
 end AppTx;
 
 architecture rtl of AppTx is
@@ -60,6 +62,9 @@ architecture rtl of AppTx is
       axilReadSlave  : AxiLiteReadSlaveType;
       axilWriteSlave : AxiLiteWriteSlaveType;
       state          : StateType;
+      led            : slv(1 downto 0);
+      toggleRate     : slv(31 downto 0);
+      toggleCounter  : slv(31 downto 0);
    end record RegType;
    constant REG_INIT_C : RegType := (
       frameSize      => x"0001_ffff",  -- Default Optimized for max. bandwidth (~9.8 Gb/s) and max. frame rate (~1.2 kHz)
@@ -72,7 +77,10 @@ architecture rtl of AppTx is
       txMaster       => axiStreamMasterInit(RSSI_AXIS_CONFIG_C),
       axilReadSlave  => AXI_LITE_READ_SLAVE_INIT_C,
       axilWriteSlave => AXI_LITE_WRITE_SLAVE_INIT_C,
-      state          => IDLE_S);
+      state          => IDLE_S,
+      led            => "11",
+      toggleRate     => x"1111_1111",
+      toggleCounter  => (others => '0')); -- toggles every ~2.5 sec
 
    signal r   : RegType := REG_INIT_C;
    signal rin : RegType;
@@ -101,8 +109,30 @@ begin
 
       axiSlaveRegister (axilEp, x"010", 0, v.continousMode);  -- Bursting Continuously Flag
 
+      -- R/W access for LED control
+      axiSlaveRegister (axilEp, x"014", 0, v.led);
+      
+      -- toggleRate reg
+      axiSlaveRegister (axilEp, x"018", 0, v.toggleRate);
+      
+      -- counter reg
+      axiSlaveRegister (axilEp, x"01C", 0, v.toggleCounter);
+
       -- Closeout the transaction
       axiSlaveDefault(axilEp, v.axilWriteSlave, v.axilReadSlave, AXI_RESP_DECERR_C);
+
+      -- counter for toggleRate
+      v.toggleCounter := r.toggleCounter + 1;
+
+      -- conditionals for toggleRate
+      if (v.toggleCounter = v.toggleRate) then
+         v.led := not r.led;
+         v.toggleCounter := (others => '0');
+      end if;
+      
+      if (v.toggleRate /= r.toggleRate) then
+         v.toggleCounter := (others => '0');
+      end if;
 
       ----------------------------------------------------------------------
       --                AXI Stream TX Logic
@@ -121,7 +151,7 @@ begin
 
                -- Latch the frameSize (in cause software changes it during streaming)
                if r.frameSize /= 0 then
-                  v.wordMax := r.frameSize-1;
+                  v.wordMax := r.frameSize-1;   
                else
                   v.wordMax := r.frameSize;
                end if;
@@ -208,6 +238,7 @@ begin
       axilWriteSlave <= r.axilWriteSlave;
       axilReadSlave  <= r.axilReadSlave;
       txMaster       <= r.txMaster;
+      led_out        <= r.led;
 
       ----------------------------------------------------------------------
 
