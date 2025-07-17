@@ -45,12 +45,6 @@ set_property C_DATA_DEPTH 1024 [get_debug_cores ${ilaName}]
 #################################
 SetDebugCoreClk ${ilaName} {U_Core/GEN_REAL.U_XbarI2cMux/axilClk}
 
-
-##################################
-## JTAG commands for IBERT IP core
-##################################
-set_property BITSTREAM.GENERAL.DEBUGBITSTREAM Yes [current_design]
-
 #######################
 ## Set the debug Probes
 #######################
