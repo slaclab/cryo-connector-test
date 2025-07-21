@@ -90,7 +90,7 @@ class Root(pr.Root):
 
             # Create root update stream
             self.stream = self.rudp[1].application(0)
-            #self.stream = self.updateStream
+            #self.stream = rogue.interfaces.stream.Master()
 
             if not self.promProg and xvcSrvEn:
                 # Create XVC server and UDP client
