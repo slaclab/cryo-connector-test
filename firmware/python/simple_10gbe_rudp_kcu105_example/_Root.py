@@ -88,8 +88,9 @@ class Root(pr.Root):
             # Connect SRPv3 to RDUP[0]
             self.srp == self.rudp[0].application(0)
 
-            # Map the streaming interface
+            # Create root update stream
             self.stream = self.rudp[1].application(0)
+            #self.stream = self.updateStream
 
             if not self.promProg and xvcSrvEn:
                 # Create XVC server and UDP client
@@ -103,21 +104,21 @@ class Root(pr.Root):
         #################################################################
 
         # Check for streaming enabled
-        if self.enSwRx:
+        #if self.enSwRx:
 
-            # File writer
-            self.dataWriter = pr.utilities.fileio.StreamWriter()
-            self.add(self.dataWriter)
+	# File writer
+        self.dataWriter = pr.utilities.fileio.StreamWriter()
+        self.add(self.dataWriter)
 
-            # Create application stream receiver
-            self.swRx = devBoard.SwRx(expand=True)
-            self.add(self.swRx)
+	# Create application stream receiver
+	#self.swRx = devBoard.SwRx(expand=True)
+	#self.add(self.swRx)
 
-            # Connect stream to swRx
-            self.stream >> self.swRx
+	# Connect stream to swRx
+	#self.stream >> self.swRx
 
-            # Also connect stream to data writer
-            self.stream >> self.dataWriter.getChannel(0)
+	# Also connect stream to data writer
+        self.stream >> self.dataWriter.getChannel(0)
 
         #################################################################
 
