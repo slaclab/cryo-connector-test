@@ -36,6 +36,8 @@ create_clock -name pgpClk -period 6.400 [get_ports { pgpClkP }]
 # Use C2M pins here
 set_property PACKAGE_PIN F6 [get_ports { pgpTxP[0] }]
 set_property PACKAGE_PIN F5 [get_ports { pgpTxN[0] }]
+
+# Unused... placeholders
 set_property PACKAGE_PIN D6 [get_ports { pgpTxP[1] }]
 set_property PACKAGE_PIN D5 [get_ports { pgpTxN[1] }]
 set_property PACKAGE_PIN C4 [get_ports { pgpTxP[2] }]
@@ -46,6 +48,8 @@ set_property PACKAGE_PIN B5 [get_ports { pgpTxN[3] }]
 # Use M2C pins here
 set_property PACKAGE_PIN E4 [get_ports { pgpRxP[0] }]
 set_property PACKAGE_PIN E3 [get_ports { pgpRxN[0] }]
+
+# Unused... placeholders
 set_property PACKAGE_PIN D2 [get_ports { pgpRxP[1] }]
 set_property PACKAGE_PIN D1 [get_ports { pgpRxN[1] }]
 set_property PACKAGE_PIN B2 [get_ports { pgpRxP[2] }]
