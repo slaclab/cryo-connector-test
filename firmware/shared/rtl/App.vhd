@@ -67,7 +67,7 @@ architecture mapping of App is
    constant PRBS_TX_INDEX_C : natural := 3;
    constant PRBS_RX_INDEX_C : natural := 7;
    
-   constant NUM_PGP_LANES_C : positive := 4;
+   constant NUM_PGP_LANES_C : positive := 1;
    constant NUM_PGP_VCS_C   : positive := 1;
    
    constant NUM_AXIL_MASTERS_C : positive := 11; -- AppTx, Mem, Pgp, 8 PRBS Tx/Rx
