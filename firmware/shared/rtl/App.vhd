@@ -51,10 +51,10 @@ entity App is
       -- PGP Serial Ports
       pgpClkP         : in  sl;
       pgpClkN         : in  sl;
-      pgpRxP          : in  slv(3 downto 0);
-      pgpRxN          : in  slv(3 downto 0);
-      pgpTxP          : out slv(3 downto 0);
-      pgpTxN          : out slv(3 downto 0));
+      pgpRxP          : in  sl;
+      pgpRxN          : in  sl;
+      pgpTxP          : out sl;
+      pgpTxN          : out sl;
       
 end App;
 
