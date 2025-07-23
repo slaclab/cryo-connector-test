@@ -54,7 +54,7 @@ entity App is
       pgpRxP          : in  sl;
       pgpRxN          : in  sl;
       pgpTxP          : out sl;
-      pgpTxN          : out sl;
+      pgpTxN          : out sl);
       
 end App;
 
