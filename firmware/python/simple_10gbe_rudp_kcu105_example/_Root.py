@@ -27,7 +27,7 @@ class Root(pr.Root):
             ip       = '192.168.2.10',
             promProg = False, # Flag to disable all devices not related to PROM programming
             enSwRx   = True,  # Flag to enable the software stream receiver
-            xvcSrvEn = True,  # Flag to include the XVC server
+            xvcSrvEn = False,  # Flag to include the XVC server
             zmqSrvPort  = 9099, # Set to zero if dynamic (instead of static)
             **kwargs):
         super().__init__(timeout=(5.0 if (ip != 'sim') else 100.0),**kwargs)
@@ -88,10 +88,6 @@ class Root(pr.Root):
             # Connect SRPv3 to RDUP[0]
             self.srp == self.rudp[0].application(0)
 
-            # Create root update stream
-            self.stream = self.rudp[1].application(0)
-            #self.stream = rogue.interfaces.stream.Master()
-
             if not self.promProg and xvcSrvEn:
                 # Create XVC server and UDP client
                 self.udpClient = rogue.protocols.udp.Client( ip, 2542, False ) # Client(host, port, jumbo)
@@ -105,9 +101,12 @@ class Root(pr.Root):
 
         # Check for streaming enabled
         #if self.enSwRx:
+        
+        # create root update Stream
+        self.updateStream = pyrogue.interfaces.stream.Variable(root=self)
 
 	# File writer
-        self.dataWriter = pr.utilities.fileio.StreamWriter()
+        self.dataWriter = pr.utilities.fileio.StreamWriter(configStream={0: self.updateStream})
         self.add(self.dataWriter)
 
 	# Create application stream receiver
@@ -118,7 +117,7 @@ class Root(pr.Root):
 	#self.stream >> self.swRx
 
 	# Also connect stream to data writer
-        self.stream >> self.dataWriter.getChannel(0)
+        # self.stream >> self.dataWriter.getChannel(0)
 
         #################################################################
 
