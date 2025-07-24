@@ -28,7 +28,7 @@ class App(pr.Device):
             offset  = 0x0001_0000,
         ))
 
-        for i in range(4):
+        for i in range(1):
             self.add(pgp.Pgp4AxiL(
                 name    = f"Pgp4AxiL[{i}]",
                 offset  = 0x0002_0000 + (i * 0x2000), # 8kB stride
